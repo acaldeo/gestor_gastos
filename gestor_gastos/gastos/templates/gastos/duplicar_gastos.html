@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Duplicar gastos de una quincena a otra</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="card p-4 shadow-sm">
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Duplicar gastos</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
