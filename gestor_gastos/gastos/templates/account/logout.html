@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Cerrar Sesión{% endblock %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
+    <h2 class="text-2xl font-bold mb-4">¿Estás seguro que querés cerrar sesión?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+            Cerrar Sesión
+        </button>
+    </form>
+    <div class="mt-4">
+        <a href="/" class="text-sm text-indigo-600 hover:underline">Volver al inicio</a>
+    </div>
+</div>
+{% endblock %}

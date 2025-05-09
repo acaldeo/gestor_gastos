@@ -10,5 +10,13 @@
             <button type="submit" class="btn btn-primary">Duplicar gastos</button>
         </div>
     </form>
+    <form method="post" action="{% url 'crear_quincena' %}" class="mb-4">
+        {% csrf_token %}
+        <div class="input-group">
+          <input type="text" name="nombre" class="form-control" placeholder="Nombre de la nueva quincena" required>
+          <button type="submit" class="btn btn-success">Crear Quincena Vacía</button>
+        </div>
+      </form>
+      
 </div>
 {% endblock %}

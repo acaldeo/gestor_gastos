@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from .forms import DuplicarGastosForm
 from .models import Quincena, Gasto, Ingreso
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def resumen_quincenal(request):
     """
     Vista que muestra ingresos y gastos organizados por quincena.
@@ -28,6 +30,7 @@ def resumen_quincenal(request):
 
     return render(request, 'gastos/resumen.html', {'datos': datos})
 
+@login_required
 def duplicar_gastos(request):
     """
     Vista para duplicar los gastos de una quincena origen a otra destino.
@@ -54,3 +57,17 @@ def duplicar_gastos(request):
         form = DuplicarGastosForm()
 
     return render(request, 'gastos/duplicar_gastos.html', {'form': form})
+
+@login_required
+def crear_quincena(request):
+    """
+    Crea una nueva quincena vacía con el nombre dado desde el formulario.
+    """
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        if nombre:
+            Quincena.objects.create(nombre=nombre)
+    return redirect('duplicar_gastos')
+@login_required
+def profile_view(request):
+    return render(request, 'account/profile.html')
