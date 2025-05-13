@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,11 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Apps propias
     'gastos',
+
+    # Django REST Framework y autenticación
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',
     'dj_rest_auth.registration',
+    'rest_framework_simplejwt',
+
+    # Django Allauth (registro y social login)
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -140,7 +148,7 @@ SITE_ID = 1
 
 # Redirección después del login
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGOUT_REDIRECT_URL = '/'
 
 # Para permitir autenticación social
 AUTHENTICATION_BACKENDS = [
@@ -156,3 +164,18 @@ ACCOUNT_EMAIL_REQUIRED = True
 SESSION_COOKIE_AGE = 1209600  # 2 semanas
 
 REST_USE_JWT = False 
+
+# Configuración de DRF
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # token de acceso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # token de refresco
+}

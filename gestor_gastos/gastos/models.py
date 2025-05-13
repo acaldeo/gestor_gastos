@@ -1,16 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
+from datetime import date
 
 class Quincena(models.Model):
-    """
-    Representa una quincena del mes.
-    Por ejemplo: 'Quincena del 5', 'Quincena del 20'
-    """
-    nombre = models.CharField(max_length=50)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)  # obligatorio
 
     def __str__(self):
-        return self.nombre
+        return f"Quincena {self.fecha_inicio} - {self.fecha_fin}"
 
 
 class Categoria(models.Model):
@@ -29,28 +27,22 @@ class TipoGasto(models.TextChoices):
 
 
 class Gasto(models.Model):
-    """
-    Registro de un gasto.
-    Puede estar asociado a una quincena y tener un tipo: fijo o variable.
-    """
-    nombre = models.CharField(max_length=100)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
-    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
-    tipo = models.CharField(max_length=10, choices=TipoGasto.choices)
-    quincena = models.ForeignKey(Quincena, on_delete=models.CASCADE)
-    pagado = models.BooleanField(default=False)
+    descripcion = models.TextField(blank=True)
+    fecha = models.DateField()
+    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='gastos')  # relación obligatoria
 
     def __str__(self):
-        return f"{self.nombre} - ${self.monto}"
+        return f"{self.descripcion} - {self.monto}"
 
 
 class Ingreso(models.Model):
-    """
-    Registro de ingreso (sueldo, transferencia, etc.)
-    """
-    descripcion = models.CharField(max_length=100)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
-    quincena = models.ForeignKey(Quincena, on_delete=models.CASCADE)
+    descripcion = models.TextField(blank=True)
+    fecha = models.DateField()
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)  # obligatorio
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.descripcion} - ${self.monto}"
+        return f"{self.descripcion} - {self.monto}"

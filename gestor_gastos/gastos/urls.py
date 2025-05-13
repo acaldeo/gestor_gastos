@@ -1,11 +1,16 @@
-from django.urls import path
-from . import views
-from .views import profile_view
+# gastos/urls.py
+
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import GastoViewSet, IngresoViewSet, QuincenaViewSet
+
+router = DefaultRouter()
+#router.register(r'gastos', GastoViewSet)
+router.register(r'ingresos', IngresoViewSet)
+router.register(r'quincenas', QuincenaViewSet)
+router.register(r'gastos', GastoViewSet, basename='gasto')
 
 urlpatterns = [
-    path('', views.resumen_quincenal, name='resumen'),
-    path('duplicar-gastos/', views.duplicar_gastos, name='duplicar_gastos'),
-    path('crear-quincena/', views.crear_quincena, name='crear_quincena'),
-    path('perfil/', profile_view, name='profile'),
-
+    path('', include(router.urls)),
+    path('', include(router.urls)),
 ]

@@ -1,73 +1,42 @@
-from django.shortcuts import render, redirect
-from .forms import DuplicarGastosForm
-from .models import Quincena, Gasto, Ingreso
-from django.contrib.auth.decorators import login_required
+# gastos/views.py
 
-@login_required
-def resumen_quincenal(request):
-    """
-    Vista que muestra ingresos y gastos organizados por quincena.
-    """
-    quincenas = Quincena.objects.all().order_by('fecha_inicio')
-    datos = []
+from rest_framework import viewsets, permissions
+from .models import Gasto, Ingreso, Quincena
+from .serializers import GastoSerializer, IngresoSerializer, QuincenaSerializer
+from rest_framework.permissions import IsAuthenticated
 
-    for q in quincenas:
-        ingresos = Ingreso.objects.filter(quincena=q)
-        gastos = Gasto.objects.filter(quincena=q)
+class GastoViewSet(viewsets.ModelViewSet):
+    queryset = Gasto.objects.all()
+    serializer_class = GastoSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-        total_ingresos = sum(i.monto for i in ingresos)
-        total_gastos = sum(g.monto for g in gastos)
-        disponibles = total_ingresos - total_gastos
+    def get_queryset(self):
+        return Gasto.objects.filter(usuario=self.request.user)
 
-        datos.append({
-            'quincena': q,
-            'ingresos': ingresos,
-            'gastos': gastos,
-            'total_ingresos': total_ingresos,
-            'total_gastos': total_gastos,
-            'disponibles': disponibles
-        })
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
 
-    return render(request, 'gastos/resumen.html', {'datos': datos})
 
-@login_required
-def duplicar_gastos(request):
-    """
-    Vista para duplicar los gastos de una quincena origen a otra destino.
-    """
-    if request.method == 'POST':
-        form = DuplicarGastosForm(request.POST)
-        if form.is_valid():
-            origen = form.cleaned_data['origen']
-            destino = form.cleaned_data['destino']
+class IngresoViewSet(viewsets.ModelViewSet):
+    queryset = Ingreso.objects.all()
+    serializer_class = IngresoSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-            # Copiar todos los gastos de la quincena origen
-            gastos_origen = Gasto.objects.filter(quincena=origen)
-            for gasto in gastos_origen:
-                Gasto.objects.create(
-                    nombre=gasto.nombre,
-                    monto=gasto.monto,
-                    tipo=gasto.tipo,
-                    categoria=gasto.categoria,
-                    quincena=destino,
-                    pagado=False  # Por defecto, los gastos duplicados están sin pagar
-                )
-            return redirect('resumen_quincenal')  # Redirige al resumen
-    else:
-        form = DuplicarGastosForm()
+    def get_queryset(self):
+        return Ingreso.objects.filter(usuario=self.request.user)
 
-    return render(request, 'gastos/duplicar_gastos.html', {'form': form})
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
 
-@login_required
-def crear_quincena(request):
-    """
-    Crea una nueva quincena vacía con el nombre dado desde el formulario.
-    """
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        if nombre:
-            Quincena.objects.create(nombre=nombre)
-    return redirect('duplicar_gastos')
-@login_required
-def profile_view(request):
-    return render(request, 'account/profile.html')
+
+
+class QuincenaViewSet(viewsets.ModelViewSet):
+    queryset = Quincena.objects.all()
+    serializer_class = QuincenaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Quincena.objects.filter(usuario=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
