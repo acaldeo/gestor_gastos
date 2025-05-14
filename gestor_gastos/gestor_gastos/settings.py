@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-7#y%r(p-tlnu*ff8m=evcd^t)6^z+g$8dh^9#ftz4%qrx0m1x@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['gestor-gastos-albr.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
