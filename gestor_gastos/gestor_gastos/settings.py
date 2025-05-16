@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -67,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'gestor_gastos.urls'
@@ -164,6 +166,8 @@ ACCOUNT_EMAIL_REQUIRED = True
 SESSION_COOKIE_AGE = 1209600  # 2 semanas
 
 REST_USE_JWT = False 
+
+CORS_ALLOW_ALL_ORIGINS = True  # o configurar tu dominio específico
 
 # Configuración de DRF
 REST_FRAMEWORK = {
